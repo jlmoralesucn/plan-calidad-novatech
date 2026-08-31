@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan de Calidad, Pruebas y Despliegue — Sistema de Información NOVATECH S.A.S.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#10233F;
+    --ink-soft:#3C4E68;
+    --paper:#EDF1F3;
+    --panel:#FFFFFF;
+    --line:#CBD5DB;
+    --pass:#2F7D5D;
+    --pass-bg:#E4F1EA;
+    --warn:#B4552F;
+    --warn-bg:#F6E7DF;
+    --amber:#B9821F;
+    --amber-bg:#F7EDD9;
+    --mono:'IBM Plex Mono', monospace;
+    --sans:'IBM Plex Sans', sans-serif;
+    --serif:'Fraunces', serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+  }
+  a{color:inherit;}
+
+  /* ---------- Layout shell ---------- */
+  .shell{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    min-height:100vh;
+  }
+  @media(max-width:900px){
+    .shell{grid-template-columns:1fr;}
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    background:var(--ink);
+    color:#DCE5EE;
+    position:sticky;
+    top:0;
+    height:100vh;
+    padding:32px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+    overflow-y:auto;
+  }
+  @media(max-width:900px){
+    .sidebar{position:relative;height:auto;}
+  }
+  .brand{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    border-bottom:1px solid rgba(255,255,255,0.15);
+    padding-bottom:20px;
+  }
+  .brand .stamp{
+    align-self:flex-start;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.12em;
+    color:#10233F;
+    background:#E7C15C;
+    padding:4px 9px;
+    border-radius:3px;
+    transform:rotate(-2deg);
+    font-weight:600;
+  }
+  .brand h1{
+    font-family:var(--serif);
+    font-size:21px;
+    font-weight:600;
+    margin:4px 0 0;
+    line-height:1.25;
+    color:#fff;
+  }
+  .brand p{
+    margin:0;
+    font-size:12.5px;
+    color:#A9BBD1;
+  }
+  nav.steps{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  nav.steps a{
+    display:flex;
+    gap:12px;
+    align-items:baseline;
+    text-decoration:none;
+    padding:9px 10px;
+    border-radius:6px;
+    font-size:13.5px;
+    color:#C3D0E1;
+    transition:background .15s ease, color .15s ease;
+  }
+  nav.steps a:hover, nav.steps a.active{
+    background:rgba(255,255,255,0.08);
+    color:#fff;
+  }
+  nav.steps a .n{
+    font-family:var(--mono);
+    font-size:11px;
+    color:#7C93B3;
+    min-width:20px;
+  }
+  nav.steps a.active .n{color:#E7C15C;}
+  .side-footer{
+    margin-top:auto;
+    font-size:11px;
+    color:#6E84A3;
+    border-top:1px solid rgba(255,255,255,0.15);
+    padding-top:16px;
+  }
+
+  /* ---------- Main ---------- */
+  main{padding:52px 56px 100px; max-width:980px;}
+  @media(max-width:640px){ main{padding:36px 20px 80px;} }
+
+  .hero{
+    margin-bottom:56px;
+  }
+  .hero .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  .hero h1{
+    font-family:var(--serif);
+    font-size:clamp(30px,4vw,44px);
+    font-weight:600;
+    margin:0 0 14px;
+    line-height:1.12;
+  }
+  .hero p.lead{
+    max-width:640px;
+    font-size:16px;
+    color:var(--ink-soft);
+    margin:0 0 20px;
+  }
+  .hero .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .pill{
+    font-family:var(--mono);
+    font-size:11.5px;
+    padding:5px 11px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--ink-soft);
+  }
+
+  section.step{
+    padding:44px 0;
+    border-top:1px solid var(--line);
+    scroll-margin-top:24px;
+  }
+  section.step:first-of-type{border-top:1px solid var(--line);}
+
+  .step-head{
+    display:flex;
+    align-items:flex-start;
+    gap:18px;
+    margin-bottom:20px;
+  }
+  .step-num{
+    font-family:var(--mono);
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink);
+    background:#E7C15C;
+    padding:6px 10px;
+    border-radius:4px;
+    transform:rotate(-1.5deg);
+    white-space:nowrap;
+  }
+  .step-head h2{
+    font-family:var(--serif);
+    font-size:26px;
+    font-weight:600;
+    margin:2px 0 0;
+  }
+  .step-intro{
+    color:var(--ink-soft);
+    max-width:760px;
+    margin:0 0 22px;
+  }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:22px 24px;
+    margin-bottom:16px;
+  }
+  .card h3{
+    font-family:var(--serif);
+    font-size:17px;
+    margin:0 0 8px;
+  }
+  .card p{margin:0 0 8px; font-size:14.5px;}
+  .card p:last-child{margin-bottom:0;}
+  .grid-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  @media(max-width:700px){.grid-2{grid-template-columns:1fr;}}
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    font-size:13.8px;
+    margin-bottom:16px;
+  }
+  thead th{
+    background:#F4F1E8;
+    text-align:left;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    padding:11px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  tbody td{
+    padding:12px 14px;
+    border-bottom:1px solid #E4E9EC;
+    vertical-align:top;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  .code{
+    font-family:var(--mono);
+    font-size:12.5px;
+    font-weight:600;
+    background:var(--amber-bg);
+    color:var(--amber);
+    padding:2px 7px;
+    border-radius:4px;
+    white-space:nowrap;
+  }
+
+  .badge{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:600;
+    padding:3px 9px;
+    border-radius:20px;
+  }
+  .badge.pass{background:var(--pass-bg); color:var(--pass);}
+  .badge.warn{background:var(--warn-bg); color:var(--warn);}
+
+  .tc-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  @media(max-width:700px){.tc-grid{grid-template-columns:1fr;}}
+  .tc-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:4px solid var(--pass);
+    border-radius:8px;
+    padding:16px 18px;
+  }
+  .tc-card .tc-id{
+    font-family:var(--mono);
+    font-size:12px;
+    font-weight:600;
+    color:var(--pass);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .tc-card h4{
+    margin:0 0 6px;
+    font-size:14.5px;
+    font-family:var(--sans);
+    font-weight:600;
+  }
+  .tc-card p{
+    margin:0 0 6px;
+    font-size:13.3px;
+    color:var(--ink-soft);
+  }
+  .tc-card p strong{color:var(--ink); font-weight:600;}
+
+  ul.clean{
+    margin:0;
+    padding-left:20px;
+  }
+  ul.clean li{
+    margin-bottom:7px;
+    font-size:14.5px;
+  }
+  ul.clean li:last-child{margin-bottom:0;}
+
+  .env-row{
+    display:grid;
+    grid-template-columns:140px 1fr;
+    gap:6px 16px;
+    padding:10px 0;
+    border-bottom:1px solid #E4E9EC;
+    font-size:14px;
+  }
+  .env-row:last-child{border-bottom:none;}
+  .env-row .tag{
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:600;
+    color:var(--ink);
+    align-self:start;
+  }
+
+  .flow{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+    margin:6px 0 4px;
+  }
+  .flow .fnode{
+    font-family:var(--mono);
+    font-size:12px;
+    background:#F4F1E8;
+    border:1px solid var(--line);
+    padding:6px 10px;
+    border-radius:6px;
+  }
+  .flow .arrow{color:var(--ink-soft); font-size:13px;}
+
+  footer.page-footer{
+    border-top:1px solid var(--line);
+    padding-top:24px;
+    margin-top:12px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="stamp">CONTROL DE CALIDAD</span>
+      <h1>Plan de Calidad, Pruebas y Despliegue</h1>
+      <p>Sistema de Gestión de Información — NOVATECH S.A.S.</p>
+    </div>
+    <nav class="steps" id="stepNav">
+      <a href="#paso1"><span class="n">01</span> Normas y modelo de calidad</a>
+      <a href="#paso2"><span class="n">02</span> Métricas de calidad</a>
+      <a href="#paso3"><span class="n">03</span> Plan de pruebas</a>
+      <a href="#paso4"><span class="n">04</span> Gestión de la configuración</a>
+      <a href="#paso5"><span class="n">05</span> Despliegue e instalación</a>
+      <a href="#paso6"><span class="n">06</span> Soporte y seguimiento</a>
+      <a href="#paso7"><span class="n">07</span> Documentación del proyecto</a>
+    </nav>
+    <div class="side-footer">
+      Ingeniería de Requisitos — Fundación Universitaria Católica del Norte<br>
+      Continuación del análisis de requerimientos de NOVATECH S.A.S.
+    </div>
+  </aside>
+
+  <main>
+    <div class="hero">
+      <div class="eyebrow">Actividad final — Calidad, pruebas y despliegue</div>
+      <h1>Del requerimiento a la operación: cerrando el ciclo del proyecto NOVATECH</h1>
+      <p class="lead">Este documento retoma el sistema de gestión de información centralizada definido para NOVATECH S.A.S. y establece cómo se garantizará su calidad, cómo se probará, cómo se configurará y desplegará, y cómo se le dará soporte una vez entregado.</p>
+      <div class="meta">
+        <span class="pill">8 requerimientos funcionales (RF-01 a RF-08)</span>
+        <span class="pill">6 requerimientos no funcionales (RNF-01 a RNF-06)</span>
+        <span class="pill">Modelo de calidad: ISO/IEC 25010</span>
+      </div>
+    </div>
+
+    <!-- PASO 1 -->
+    <section class="step" id="paso1">
+      <div class="step-head">
+        <span class="step-num">01</span>
+        <h2>Normas y modelo de calidad</h2>
+      </div>
+      <p class="step-intro">Para evaluar la calidad del sistema de información de NOVATECH S.A.S. se adopta el estándar <strong>ISO/IEC 25010 (SQuaRE — System and Software Quality Requirements and Evaluation)</strong>.</p>
+
+      <div class="card">
+        <h3>Justificación de la elección</h3>
+        <p>El proyecto es un sistema de información de gestión (registro de clientes, oportunidades y actividades comerciales), no un desarrollo de gran escala ni una fábrica de software con procesos organizacionales maduros. Por esa razón se descarta un modelo de madurez de proceso como <strong>CMMI</strong>, que evalúa la capacidad de la organización que desarrolla software a largo plazo, y resulta desproporcionado para un proyecto académico de un solo producto.</p>
+        <p><strong>ISO/IEC 25010</strong> en cambio evalúa directamente la calidad del <em>producto</em> software mediante características verificables, lo que encaja con los requerimientos ya definidos: los RNF-01 y RNF-02 corresponden a la característica de <strong>seguridad</strong>, el RNF-03 a <strong>eficiencia de desempeño</strong>, el RNF-04 a <strong>usabilidad</strong>, y los RNF-05 y RNF-06 a <strong>fiabilidad</strong>. Esto permite construir métricas y casos de prueba directamente trazables a los requerimientos no funcionales del sistema.</p>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Característica ISO/IEC 25010</th><th>Aplicación en el sistema NOVATECH</th><th>Requerimiento relacionado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Adecuación funcional</td><td>El sistema cubre el registro y consulta de clientes, oportunidades y actividades comerciales.</td><td><span class="code">RF-01 a RF-08</span></td></tr>
+          <tr><td>Seguridad</td><td>Autenticación y control de acceso por perfil de usuario.</td><td><span class="code">RNF-01</span> <span class="code">RNF-02</span></td></tr>
+          <tr><td>Eficiencia de desempeño</td><td>Tiempo de respuesta de consultas frecuentes.</td><td><span class="code">RNF-03</span></td></tr>
+          <tr><td>Usabilidad</td><td>Interfaz clara para usuarios con conocimientos básicos de informática.</td><td><span class="code">RNF-04</span></td></tr>
+          <tr><td>Fiabilidad</td><td>Auditoría de operaciones críticas y copias de seguridad periódicas.</td><td><span class="code">RNF-05</span> <span class="code">RNF-06</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- PASO 2 -->
+    <section class="step" id="paso2">
+      <div class="step-head">
+        <span class="step-num">02</span>
+        <h2>Métricas de calidad</h2>
+      </div>
+      <p class="step-intro">Se definen cuatro métricas, cada una asociada a una característica de ISO/IEC 25010 y a la forma concreta en que se medirá.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>1. Cobertura de pruebas</h3>
+          <p><strong>Qué mide:</strong> el porcentaje de requerimientos funcionales que cuentan con al menos un caso de prueba ejecutado.</p>
+          <p><strong>Cómo se mide:</strong> (requerimientos con casos de prueba ejecutados ÷ total de requerimientos funcionales) × 100, usando la matriz de trazabilidad requerimiento–caso de prueba.</p>
+          <p><strong>Meta:</strong> 100 % de RF-01 a RF-08 cubiertos antes de la entrega.</p>
+        </div>
+        <div class="card">
+          <h3>2. Tasa de defectos</h3>
+          <p><strong>Qué mide:</strong> la cantidad de defectos encontrados por número de casos de prueba ejecutados, y su severidad.</p>
+          <p><strong>Cómo se mide:</strong> (defectos detectados ÷ casos de prueba ejecutados) × 100, registrados en la bitácora de incidencias de pruebas.</p>
+          <p><strong>Meta:</strong> cero defectos críticos o altos abiertos al momento del despliegue.</p>
+        </div>
+        <div class="card">
+          <h3>3. Tiempo de respuesta</h3>
+          <p><strong>Qué mide:</strong> el tiempo que tarda el sistema en responder a las consultas y búsquedas principales (RNF-03).</p>
+          <p><strong>Cómo se mide:</strong> percentil 95 del tiempo de respuesta bajo prueba de carga simulada con un número representativo de usuarios concurrentes.</p>
+          <p><strong>Meta:</strong> menor o igual a 3 segundos en condiciones normales.</p>
+        </div>
+        <div class="card">
+          <h3>4. Usabilidad percibida</h3>
+          <p><strong>Qué mide:</strong> la facilidad de uso percibida por usuarios reales del área comercial y operativa (RNF-04).</p>
+          <p><strong>Cómo se mide:</strong> encuesta System Usability Scale (SUS) aplicada tras las pruebas de aceptación.</p>
+          <p><strong>Meta:</strong> puntaje SUS superior a 70 sobre 100.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASO 3 -->
+    <section class="step" id="paso3">
+      <div class="step-head">
+        <span class="step-num">03</span>
+        <h2>Plan de pruebas</h2>
+      </div>
+      <p class="step-intro">El plan combina distintos tipos de prueba a lo largo del ciclo de vida del sistema, desde la unidad de código hasta la aceptación por parte del usuario final.</p>
+
+      <div class="card">
+        <h3>Tipos de prueba a realizar</h3>
+        <ul class="clean">
+          <li><strong>Pruebas unitarias:</strong> validan funciones individuales (por ejemplo, la validación de duplicados de clientes de RF-08) de forma aislada.</li>
+          <li><strong>Pruebas de integración:</strong> validan que los módulos de clientes, oportunidades, actividades y reportes intercambien datos correctamente.</li>
+          <li><strong>Pruebas de sistema:</strong> validan el sistema completo frente a los requerimientos funcionales y no funcionales definidos.</li>
+          <li><strong>Pruebas de aceptación (UAT):</strong> realizadas con usuarios representativos de las áreas comercial, operativa y de TI antes del paso a producción.</li>
+          <li><strong>Pruebas de carga:</strong> validan el tiempo de respuesta (RNF-03) con varios usuarios consultando simultáneamente.</li>
+          <li><strong>Pruebas de seguridad:</strong> validan la autenticación y los permisos por perfil (RNF-01, RNF-02).</li>
+        </ul>
+      </div>
+
+      <h3 style="font-family:var(--serif); font-size:19px; margin:26px 0 12px;">Casos de prueba</h3>
+      <div class="tc-grid">
+        <div class="tc-card">
+          <div class="tc-id">CP-01 <span class="badge pass">RF-01</span></div>
+          <h4>Registro de un nuevo cliente</h4>
+          <p><strong>Pasos:</strong> ingresar al módulo de clientes y registrar uno nuevo con datos válidos de identificación y contacto.</p>
+          <p><strong>Resultado esperado:</strong> el cliente queda guardado y visible en el listado, con mensaje de confirmación.</p>
+        </div>
+        <div class="tc-card">
+          <div class="tc-id">CP-02 <span class="badge pass">RF-08</span></div>
+          <h4>Bloqueo de cliente duplicado</h4>
+          <p><strong>Pasos:</strong> registrar un cliente usando un número de identificación ya existente en el sistema.</p>
+          <p><strong>Resultado esperado:</strong> el sistema rechaza el registro y notifica que el cliente ya existe.</p>
+        </div>
+        <div class="tc-card">
+          <div class="tc-id">CP-03 <span class="badge pass">RF-02</span></div>
+          <h4>Consulta y actualización de cliente</h4>
+          <p><strong>Pasos:</strong> buscar un cliente existente y modificar su información de contacto.</p>
+          <p><strong>Resultado esperado:</strong> los cambios quedan guardados y se reflejan al volver a consultar el registro.</p>
+        </div>
+        <div class="tc-card">
+          <div class="tc-id">CP-04 <span class="badge pass">RF-03 · RF-04</span></div>
+          <h4>Registro de oportunidad y seguimiento</h4>
+          <p><strong>Pasos:</strong> crear una oportunidad comercial asociada a un cliente y registrar una actividad de seguimiento.</p>
+          <p><strong>Resultado esperado:</strong> la oportunidad y la actividad quedan asociadas y visibles en el historial del cliente.</p>
+        </div>
+        <div class="tc-card">
+          <div class="tc-id">CP-05 <span class="badge warn">RF-06 · RNF-02</span></div>
+          <h4>Control de acceso por perfil</h4>
+          <p><strong>Pasos:</strong> iniciar sesión con un perfil de talento humano e intentar acceder al módulo comercial.</p>
+          <p><strong>Resultado esperado:</strong> el sistema deniega el acceso al módulo no autorizado para ese perfil.</p>
+        </div>
+        <div class="tc-card">
+          <div class="tc-id">CP-06 <span class="badge warn">RNF-03</span></div>
+          <h4>Tiempo de respuesta en búsquedas</h4>
+          <p><strong>Pasos:</strong> ejecutar una búsqueda de clientes con 20 usuarios simulados consultando al mismo tiempo.</p>
+          <p><strong>Resultado esperado:</strong> el percentil 95 del tiempo de respuesta no supera los 3 segundos.</p>
+        </div>
+        <div class="tc-card">
+          <div class="tc-id">CP-07 <span class="badge pass">RF-07</span></div>
+          <h4>Generación de reporte comercial</h4>
+          <p><strong>Pasos:</strong> generar el reporte de oportunidades y actividades del último mes desde el módulo de reportes.</p>
+          <p><strong>Resultado esperado:</strong> el reporte se genera con datos consistentes con lo registrado en el sistema.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3>Criterios de aceptación del software</h3>
+        <ul class="clean">
+          <li>100 % de los requerimientos funcionales (RF-01 a RF-08) con casos de prueba ejecutados y aprobados.</li>
+          <li>Cero defectos de severidad crítica o alta sin resolver al momento de la entrega.</li>
+          <li>Tiempo de respuesta de consultas principales igual o menor a 3 segundos (RNF-03), verificado con prueba de carga.</li>
+          <li>Autenticación y permisos por perfil funcionando correctamente en el 100 % de los casos probados (RNF-01, RNF-02).</li>
+          <li>Puntaje SUS de usabilidad superior a 70 obtenido en las pruebas de aceptación con usuarios.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PASO 4 -->
+    <section class="step" id="paso4">
+      <div class="step-head">
+        <span class="step-num">04</span>
+        <h2>Gestión de la configuración</h2>
+      </div>
+      <p class="step-intro">La gestión de la configuración define cómo se controlan las versiones del software, los entornos donde se ejecuta y los cambios que se le realizan, de manera que el equipo siempre sepa qué versión está en cada lugar.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Control de versiones</h3>
+          <p>Se utiliza <strong>versionamiento semántico</strong> (MAYOR.MENOR.PARCHE), por ejemplo <span class="code">1.2.0</span>, junto con un repositorio Git y un flujo de ramas: <span class="code">main</span> (versión estable), <span class="code">develop</span> (integración), <span class="code">feature/*</span> (nuevas funcionalidades) y <span class="code">hotfix/*</span> (correcciones urgentes).</p>
+        </div>
+        <div class="card">
+          <h3>Control de cambios</h3>
+          <p>Toda modificación pasa por una solicitud de cambio registrada, revisión por el líder técnico y aprobación antes de integrarse a <span class="code">develop</span>. Cada versión liberada queda etiquetada (<em>tag</em>) en el repositorio, con un registro de qué cambió respecto a la anterior.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Entornos</h3>
+        <div class="env-row">
+          <span class="tag">DESARROLLO</span>
+          <span>Entorno local o de equipo donde se construyen y prueban nuevas funcionalidades, con datos ficticios. Acceso: equipo de desarrollo.</span>
+        </div>
+        <div class="env-row">
+          <span class="tag">PRUEBAS / QA</span>
+          <span>Entorno que replica la configuración de producción, usado para pruebas de integración, sistema, carga y aceptación con datos anonimizados. Acceso: equipo de desarrollo, QA y usuarios clave de UAT.</span>
+        </div>
+        <div class="env-row">
+          <span class="tag">PRODUCCIÓN</span>
+          <span>Entorno real usado por NOVATECH S.A.S., con datos reales de clientes y operaciones. Acceso restringido según perfil, con copias de seguridad periódicas (RNF-06).</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASO 5 -->
+    <section class="step" id="paso5">
+      <div class="step-head">
+        <span class="step-num">05</span>
+        <h2>Plan de despliegue e instalación</h2>
+      </div>
+      <p class="step-intro">El despliegue se realiza de forma controlada, primero validando en el entorno de pruebas y luego liberando a producción en una ventana de bajo uso para minimizar el impacto sobre las áreas comercial y operativa.</p>
+
+      <div class="card">
+        <h3>Requisitos técnicos mínimos</h3>
+        <ul class="clean">
+          <li><strong>Servidor:</strong> 4 núcleos de CPU, 8 GB de RAM, 100 GB de almacenamiento, sistema operativo Linux (Ubuntu Server o similar).</li>
+          <li><strong>Base de datos:</strong> motor relacional (PostgreSQL o MySQL) con respaldo automático programado.</li>
+          <li><strong>Conectividad:</strong> acceso HTTPS con certificado SSL vigente y red estable entre las sedes de Medellín, Bogotá y Cali.</li>
+          <li><strong>Cliente:</strong> navegador web actualizado (Chrome, Edge o Firefox) en los equipos de los usuarios finales.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Secuencia de despliegue</h3>
+        <div class="flow">
+          <span class="fnode">Respaldo del estado actual</span><span class="arrow">→</span>
+          <span class="fnode">Despliegue en entorno de pruebas</span><span class="arrow">→</span>
+          <span class="fnode">Pruebas de humo (smoke test)</span><span class="arrow">→</span>
+          <span class="fnode">Ventana de despliegue en horario de bajo uso</span><span class="arrow">→</span>
+          <span class="fnode">Despliegue en producción</span><span class="arrow">→</span>
+          <span class="fnode">Verificación post-despliegue</span><span class="arrow">→</span>
+          <span class="fnode">Comunicación a usuarios</span>
+        </div>
+        <p style="margin-top:12px;">Si la verificación post-despliegue encuentra fallas críticas, se ejecuta el plan de reversión (<em>rollback</em>) restaurando la última versión estable a partir del respaldo tomado antes del despliegue.</p>
+      </div>
+    </section>
+
+    <!-- PASO 6 -->
+    <section class="step" id="paso6">
+      <div class="step-head">
+        <span class="step-num">06</span>
+        <h2>Soporte y seguimiento post-proyecto</h2>
+      </div>
+      <p class="step-intro">Una vez entregado el sistema, NOVATECH S.A.S. requiere un mecanismo claro para reportar problemas, resolverlos según su gravedad y seguir evolucionando la solución.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Mesa de ayuda escalonada</h3>
+          <ul class="clean">
+            <li><strong>Nivel 1:</strong> soporte básico (accesos, dudas de uso), resuelto por el área de TI de NOVATECH.</li>
+            <li><strong>Nivel 2:</strong> soporte técnico funcional (errores de configuración, reportes).</li>
+            <li><strong>Nivel 3:</strong> equipo de desarrollo, para defectos del software o cambios estructurales.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Canal de reporte de incidencias</h3>
+          <p>Sistema de tickets con niveles de prioridad (crítico, alto, medio, bajo) y tiempos de atención (SLA) asociados a cada nivel, de forma que un incidente crítico en producción se atienda en el menor tiempo posible.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Ciclo de mantenimiento</h3>
+        <p><strong>Correctivo:</strong> corrección de defectos detectados en producción, liberado como parche tan pronto se valide en el entorno de pruebas.</p>
+        <p><strong>Evolutivo:</strong> nuevas funcionalidades o mejoras solicitadas por los usuarios, agrupadas y liberadas en ciclos periódicos (por ejemplo, trimestrales), siguiendo el mismo proceso de pruebas y despliegue definido en este documento.</p>
+      </div>
+    </section>
+
+    <!-- PASO 7 -->
+    <section class="step" id="paso7">
+      <div class="step-head">
+        <span class="step-num">07</span>
+        <h2>Documentación del proyecto</h2>
+      </div>
+      <p class="step-intro">La documentación acompaña al sistema durante toda su vida útil, no solo durante el desarrollo, para que tanto usuarios como el equipo técnico puedan operarlo y mantenerlo con el tiempo.</p>
+
+      <table>
+        <thead>
+          <tr><th>Formato / herramienta</th><th>Propósito</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Manual de usuario (documento / PDF)</td><td>Guiar a los colaboradores de las áreas comercial, operativa y administrativa en el uso diario del sistema.</td></tr>
+          <tr><td>Manual técnico y de arquitectura</td><td>Describir la estructura del sistema, los módulos y las integraciones, como referencia para el equipo de TI y desarrollo.</td></tr>
+          <tr><td>Repositorio de código (Git)</td><td>Versionar el código fuente, con historial de cambios, ramas y etiquetas de versión.</td></tr>
+          <tr><td>Wiki interna del proyecto</td><td>Centralizar decisiones de diseño, procesos internos y guías de configuración de los entornos.</td></tr>
+          <tr><td>Bitácora de cambios (changelog)</td><td>Registrar qué cambió en cada versión liberada, incluyendo correcciones y nuevas funcionalidades.</td></tr>
+          <tr><td>Matriz de trazabilidad y plan de pruebas</td><td>Vincular hallazgos, requerimientos y casos de prueba, como el presente documento, para sustentar decisiones de calidad.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer class="page-footer">
+      Plan de calidad, pruebas, configuración y despliegue elaborado como continuación del análisis de requerimientos del sistema de información de NOVATECH S.A.S. — Ingeniería de Requisitos, 2026.
+    </footer>
+  </main>
+</div>
+
+<script>
+  const links = document.querySelectorAll('nav.steps a');
+  const sections = Array.from(links).map(l => document.querySelector(l.getAttribute('href')));
+  function onScroll(){
+    let current = sections[0];
+    const y = window.scrollY + 120;
+    sections.forEach(sec => { if(sec && sec.offsetTop <= y) current = sec; });
+    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current.id));
+  }
+  document.addEventListener('scroll', onScroll);
+  onScroll();
+</script>
+</body>
+</html>
